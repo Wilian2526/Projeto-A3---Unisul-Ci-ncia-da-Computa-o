@@ -1,0 +1,376 @@
+Projeto A3 Algoritmos e Programação.
+
+======= Aluno: LUIS FERNANDO NASCIMENTO ALVES =======
+======= Aluno: ORLANDO GERALDO ESTEVAM =======
+======= Aluno: WAGNER WILIAN MOREIRA =======
+
+Disciplina: Programação em Java
+Projeto: Controle de Funcionários/Sistema de Cadastro de Colaboradores /
+
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Colaborador {
+
+    public static final double SALARIO_BASE = 2000.0;
+
+    int registro;
+    String nome;
+    String tipo;
+
+    double vendas;
+    double percentual;
+
+    double valorPorPeca;
+    int quantidadeProduzida;
+
+    public Colaborador(int registro, String nome, String tipo) {
+
+        this.registro = registro;
+        this.nome = nome;
+        this.tipo = tipo;
+
+        vendas = 0;
+        percentual = 0;
+
+        valorPorPeca = 0;
+        quantidadeProduzida = 0;
+    }
+
+    public double calcularSalario() {
+
+        if (tipo.equalsIgnoreCase("Comissionado")) {
+
+            double comissao = (vendas * percentual / 100);
+
+            return SALARIO_BASE + comissao;
+        }
+
+        else if (tipo.equalsIgnoreCase("Producao")) {
+
+            double bonus = valorPorPeca * quantidadeProduzida;
+
+            return SALARIO_BASE + bonus;
+        }
+
+        else {
+
+            return SALARIO_BASE;
+        }
+    }
+}
+
+ class Main {
+
+    static Scanner scanner = new Scanner(System.in);
+
+    static ArrayList<Colaborador> colaboradores = new ArrayList<>();
+
+    static int proximoRegistro = 1;
+
+    public static void main(String[] args) {
+
+        int opcao;
+
+        do {
+
+            System.out.println("\n===== SISTEMA DE COLABORADORES =====");
+            System.out.println("1 - Cadastrar colaborador");
+            System.out.println("2 - Registrar vendas");
+            System.out.println("3 - Registrar produção");
+            System.out.println("4 - Listar colaboradores");
+            System.out.println("5 - Mostrar folha salarial");
+            System.out.println("6 - Sair");
+
+            System.out.print("Escolha uma opção: ");
+
+            opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcao) {
+
+                case 1:
+
+                    cadastrarColaborador();
+                    break;
+
+                case 2:
+
+                    registrarVendas();
+                    break;
+
+                case 3:
+
+                    registrarProducao();
+                    break;
+
+                case 4:
+
+                    listarColaboradores();
+                    break;
+
+                case 5:
+
+                    mostrarFolhaSalarial();
+                    break;
+
+                case 6:
+
+                    System.out.println("Sistema encerrado.");
+                    break;
+
+                default:
+
+                    System.out.println("Opção inválida.");
+            }
+
+        } while (opcao != 6);
+    }
+
+    public static void cadastrarColaborador() {
+
+        System.out.println("\n1 - Funcionário padrão");
+        System.out.println("2 - Funcionário comissionado");
+        System.out.println("3 - Funcionário produção");
+
+        System.out.print("Escolha o tipo: ");
+
+        int tipoEscolhido = scanner.nextInt();
+        scanner.nextLine();
+
+        String tipo = "";
+
+        switch (tipoEscolhido) {
+
+            case 1:
+
+                tipo = "Padrao";
+                break;
+
+            case 2:
+
+                tipo = "Comissionado";
+                break;
+
+            case 3:
+
+                tipo = "Producao";
+                break;
+
+            default:
+
+                System.out.println("Tipo inválido.");
+                return;
+        }
+
+        int registro = proximoRegistro;
+
+        proximoRegistro++;
+
+        System.out.println("Registro automático: " + registro);
+
+        System.out.print("Nome completo: ");
+
+        String nome = scanner.nextLine();
+
+        Colaborador colaborador = new Colaborador(registro, nome, tipo);
+
+        colaboradores.add(colaborador);
+
+        System.out.println("Colaborador cadastrado com sucesso.");
+    }
+
+    public static void registrarVendas() {
+
+        boolean encontrou = false;
+
+        System.out.println("\n===== FUNCIONÁRIOS COMISSIONADOS =====");
+
+        for (Colaborador c : colaboradores) {
+
+            if (c.tipo.equalsIgnoreCase("Comissionado")) {
+
+                System.out.println("Registro: " + c.registro);
+                System.out.println("Nome: " + c.nome);
+
+                System.out.println("-----------------------");
+
+                encontrou = true;
+            }
+        }
+
+        if (!encontrou) {
+
+            System.out.println("Nenhum funcionário comissionado cadastrado.");
+            return;
+        }
+
+        System.out.print("Digite o número de registro: ");
+
+        int registro = scanner.nextInt();
+
+        for (Colaborador c : colaboradores) {
+
+            if (c.registro == registro) {
+
+                if (c.tipo.equalsIgnoreCase("Comissionado")) {
+
+                    System.out.print("Valor total de vendas: ");
+
+                    double vendas = scanner.nextDouble();
+
+                    if (vendas < 0) {
+
+                        System.out.println("Valor inválido.");
+                        return;
+                    }
+
+                    System.out.print("Percentual de comissão: ");
+
+                    double percentual = scanner.nextDouble();
+
+                    if (percentual < 0 || percentual > 100) {
+
+                        System.out.println("Percentual inválido.");
+                        return;
+                    }
+
+                    c.vendas = vendas;
+                    c.percentual = percentual;
+
+                    System.out.println("Vendas registradas com sucesso.");
+                }
+
+                else {
+
+                    System.out.println("Esse funcionário não é comissionado.");
+                }
+
+                return;
+            }
+        }
+
+        System.out.println("Funcionário não encontrado.");
+    }
+
+    public static void registrarProducao() {
+
+        boolean encontrou = false;
+
+        System.out.println("\n===== FUNCIONÁRIOS PRODUÇÃO =====");
+
+        for (Colaborador c : colaboradores) {
+
+            if (c.tipo.equalsIgnoreCase("Producao")) {
+
+                System.out.println("Registro: " + c.registro);
+                System.out.println("Nome: " + c.nome);
+
+                System.out.println("-----------------------");
+
+                encontrou = true;
+            }
+        }
+
+        if (!encontrou) {
+
+            System.out.println("Nenhum funcionário de produção cadastrado.");
+            return;
+        }
+
+        System.out.print("Digite o número de registro: ");
+
+        int registro = scanner.nextInt();
+
+        for (Colaborador c : colaboradores) {
+
+            if (c.registro == registro) {
+
+                if (c.tipo.equalsIgnoreCase("Producao")) {
+
+                    System.out.print("Valor por peça: ");
+
+                    double valorPorPeca = scanner.nextDouble();
+
+                    if (valorPorPeca < 0) {
+
+                        System.out.println("Valor inválido.");
+                        return;
+                    }
+
+                    System.out.print("Quantidade produzida: ");
+
+                    int quantidade = scanner.nextInt();
+
+                    if (quantidade < 0) {
+
+                        System.out.println("Quantidade inválida.");
+                        return;
+                    }
+
+                    c.valorPorPeca = valorPorPeca;
+                    c.quantidadeProduzida = quantidade;
+
+                    System.out.println("Produção registrada com sucesso.");
+                }
+
+                else {
+
+                    System.out.println("Esse funcionário não é de produção.");
+                }
+
+                return;
+            }
+        }
+
+        System.out.println("Funcionário não encontrado.");
+    }
+
+    public static void listarColaboradores() {
+
+        if (colaboradores.isEmpty()) {
+
+            System.out.println("\nNenhum colaborador cadastrado.");
+            return;
+        }
+
+        System.out.println("\n===== LISTA DE COLABORADORES =====");
+
+        int i = 0;
+
+        while (i < colaboradores.size()) {
+
+            Colaborador c = colaboradores.get(i);
+
+            System.out.println("Registro: " + c.registro);
+            System.out.println("Nome: " + c.nome);
+            System.out.println("Tipo: " + c.tipo);
+
+            System.out.println("-----------------------");
+
+            i++;
+        }
+    }
+
+    public static void mostrarFolhaSalarial() {
+
+        if (colaboradores.isEmpty()) {
+
+            System.out.println("\nNenhum colaborador cadastrado.");
+            return;
+        }
+
+        System.out.println("\n===== FOLHA SALARIAL =====");
+
+        for (Colaborador c : colaboradores) {
+
+            System.out.println("Registro: " + c.registro);
+            System.out.println("Nome: " + c.nome);
+
+            System.out.println("Salário Final: R$ " + c.calcularSalario());
+
+            System.out.println("-----------------------");
+        }
+    }
+}
